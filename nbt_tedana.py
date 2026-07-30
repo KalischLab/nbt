@@ -1,0 +1,173 @@
+#!/opt/venv-nbt/bin/python
+
+import gzip
+import pickle
+import os
+import os.path as op
+from nipype.interfaces import fsl
+from glob import glob
+from nipype.interfaces.ants import ApplyTransforms
+import argparse
+import pdb
+import tedana
+
+def nbt_tedana():
+
+    parser = argparse.ArgumentParser(description=
+    "nbt_tedana.py performs tedana multi-echo ICA and optimal "
+    "combination. ANTs-based normalization and FSL-based masking is performed "
+    "on the preprocessed data. fMRIprep preprocessed data with "
+    "--me-output-echos option chosen is required. If only one anatomical image "
+    "has been acquired in a multi-session experiment, please indicate the session ID of the "
+    "anatomical scan.")
+
+    parser.add_argument("base", help=
+    "fmriprep directory including derivatives older.")
+
+    parser.add_argument("fmriprepID", help=
+    "Unique(!) BIDS-compliant file identifier including task (required), acq "
+    "(required) and run (if applicable) label, e.g. task-mmid_acq-me4mb3_run-1. "
+    "Labels must be part in multi-echo filename.")
+
+    parser.add_argument("-subs", "--subjects", help=
+    "list of subject identifiers for processing", nargs='+', required=True)
+    parser.add_argument("-sess", "--sessions", help=
+    "list of session identifiers for processing", nargs='+',required=True)
+    parser.add_argument("-anat", "--anat_session", help=
+    "Session in which anatomical T1w image has been acquired. Location of T1toMNI transform",type=str)
+    parser.add_argument("-et", "--echotimes", help=
+    "list of echo times, e.g. ", nargs='+', 
+    default=['12', '28.24', '44.48', '60.72'])
+    
+    parser.add_argument("-fp", "--fslspath", help=
+    "Path to fsl binary", type=str, default='/usr/local/fsl/bin/fsl')
+    parser.add_argument("-ap", "--antspath", help=
+    "Path to Ants binary", type=str, default='/usr/local/bin/ANTs/bin/ants')
+    parser.add_argument("-d", "--derivatives", help=
+    "If derivatives folder in the base directory is not named [derivatives]"
+    ", provide new folder name here.", type=str)
+    
+    args = parser.parse_args()
+
+    fmriprepID = args.fmriprepID
+   # fmriprepID_underscore = args.fmriprepID.replace('-', '_')
+
+    if args.derivatives is not None:
+        der_dirname = args.derivatives
+    else:
+        der_dirname = "derivatives"    
+
+    deriv_dir = op.join(args.base, der_dirname)
+ 
+    for sub in args.subjects:
+        for ses in args.sessions:
+            
+            if sub.startswith("sub-"):
+                sub = sub[4:]
+        
+            substr = 'sub-{0}'.format(sub)
+            sesstr = 'ses-{0}'.format(ses)
+            echo_suf =  "*" + fmriprepID + '*echo-*_desc-preproc*.nii.gz'
+
+            mask_native_suf =  "*" + fmriprepID + '_desc-brain_mask.nii.gz'
+
+            echo_files = glob(op.join(deriv_dir, substr, sesstr,'func',
+            echo_suf))
+            mask_native_file = glob(op.join(deriv_dir, substr, sesstr,'func',
+            mask_native_suf))
+            
+            echo_files.sort()
+
+            sub_ses_func = op.join(deriv_dir, substr, sesstr,'func')
+
+            tedana_arg              = {'echoFiles': echo_files}
+            tedana_arg['echoTimes'] = args.echotimes
+            tedana_arg['out-dir']   = op.join(sub_ses_func, 'tedana',fmriprepID)
+            tedana_arg['maskFile']  = mask_native_file[0]
+
+            # Create tedana output directories
+            os.makedirs(tedana_arg['out-dir'], exist_ok=True)
+
+            # System call tedana
+            sys_str = 'tedana -d ' + ' '.join(tedana_arg['echoFiles']) + ' -e ' \
+            + ' '.join(tedana_arg['echoTimes']) + ' --out-dir ' \
+            + tedana_arg['out-dir'] + ' --overwrite' + ' --mask ' + tedana_arg['maskFile'] 
+
+            os.system(sys_str)
+
+            #Try this transform for BOLD to T1w mapping
+#            SDC_transform_suf = '*' + fmriprepID + '*boldref_to-auto*.txt'
+#            preSDC_to_Bold = glob(op.join(deriv_dir, substr, sesstr, 
+#                                        'func',SDC_transform_suf))
+
+            #Try this transform for BOLD to T1w mapping
+            BoldToT1_suf = '*' + fmriprepID + '*boldref_to-T1w*.txt'
+            BoldToT1 = glob(op.join(deriv_dir, substr, sesstr, 
+                                        'func',BoldToT1_suf))
+            #Otherwise use the following. The transform is only generated 
+            #when multiple T1 images exist.
+            #if not BoldToT1:
+            #    BoldToT1_suf = '*boldref_to-T1w*.txt'
+            #    BoldToT1 = glob(op.join(deriv_dir, substr, sesstr, 
+            #                            'anat',BoldToT1_suf))
+
+            t1ToMni_suf   = '*T1w_to-MNI*.h5'
+            boldref_suf   = '*' + fmriprepID + '*space-MNI152NLin2009cAsym_boldref.nii.gz'
+            brainmask_suf = '*' + fmriprepID + '*space-MNI152NLin2009cAsym_desc-brain_mask.nii.gz'
+           
+            if os.path.isdir(op.join(deriv_dir, substr, 'anat')):
+                sub_ses_anat_T1toMNI = glob(op.join(deriv_dir, substr, 
+                                            'anat',t1ToMni_suf))
+            elif args.anat_session is not None:
+                anatsesstr = "ses-" + args.anat_session
+                sub_ses_anat_T1toMNI = glob(op.join(deriv_dir, substr, anatsesstr, 
+                                            'anat',t1ToMni_suf))
+            else:
+                sub_ses_anat_T1toMNI = glob(op.join(deriv_dir, substr, sesstr, 
+                                            'anat',t1ToMni_suf))
+
+            T1toMNI = sub_ses_anat_T1toMNI[0]
+            
+            ref_file  = glob(op.join(deriv_dir, substr, sesstr,'func',
+                             boldref_suf))[0]
+            mask_file = glob(op.join(deriv_dir, substr, sesstr,'func',
+                             brainmask_suf))[0]
+
+            at = ApplyTransforms()  
+     #       at.inputs.transforms = [T1toMNI,BoldToT1[0],preSDC_to_Bold[0]] 
+            at.inputs.transforms = [T1toMNI,BoldToT1[0]] 
+            at.inputs.reference_image = ref_file
+            at.inputs.dimension = 3
+            at.inputs.input_image_type = 3
+            at.inputs.default_value = 0.0
+            at.inputs.interpolation = 'LanczosWindowedSinc'
+            at.inputs.float = True
+            
+            at.inputs.input_image = op.join(tedana_arg['out-dir'], 
+                                            'desc-denoised_bold.nii.gz')
+            at.inputs.output_image = op.join(tedana_arg['out-dir'],
+                                             'desc-denoised_bold_mni.nii.gz')
+
+            # Add ANTs to PATH
+            os.environ['PATH'] += os.path.pathsep + '/usr/local/bin/ANTs/bin/'
+
+            at.run()
+
+            # Set arguments for ApplyMask
+            applymask_arg = {'mask': mask_file, 'file': at.inputs.output_image,
+                             'output': at.inputs.output_image.replace('.nii.gz', 
+                             '_masked.nii.gz')}
+
+            # Add fsl to PATH and set output_type to nii.gz
+            os.environ['PATH'] += os.path.pathsep + '/usr/local/fsl/bin/'
+            fsl.FSLCommand.set_default_output_type('NIFTI_GZ')
+
+            # Run ApplyMask
+            mask = fsl.ApplyMask(in_file = applymask_arg['file'], 
+                   mask_file = applymask_arg['mask'], 
+                   out_file = applymask_arg['output'])
+            
+            mask.run()
+
+if __name__ == '__main__':
+    nbt_tedana()

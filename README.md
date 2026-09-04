@@ -18,7 +18,7 @@ nbt (nic bids tools) is a customized collection of python scripts facilitating B
 |run|BIDS run|
 |task|BIDS task name|
 
-Example templates for multiecho and singleecho fMRI can be found in this repository.
+If multiple fieldmaps have been acquired in a session, they must have a "run" number. Example templates for multi-echo and single-echo fMRI can be found in this repository.
 
 3. Run nbt_assign.py to generate the dataset structure for the entire set of raw DICOM files.
 

@@ -69,7 +69,7 @@ def nbt_tedana():
             sesstr = 'ses-{0}'.format(ses)
             echo_suf =  "*" + fmriprepID + '*echo-*_desc-preproc*.nii.gz'
 
-            mask_native_suf =  "*" + fmriprepID + '_desc-brain_mask.nii.gz'
+            mask_native_suf =  "*" + fmriprepID + '*_desc-brain_mask.nii.gz'
 
             echo_files = glob(op.join(deriv_dir, substr, sesstr,'func',
             echo_suf))
@@ -83,13 +83,14 @@ def nbt_tedana():
             tedana_arg              = {'echoFiles': echo_files}
             tedana_arg['echoTimes'] = args.echotimes
             tedana_arg['out-dir']   = op.join(sub_ses_func, 'tedana',fmriprepID)
+            #pdb.set_trace()
             tedana_arg['maskFile']  = mask_native_file[0]
 
             # Create tedana output directories
             os.makedirs(tedana_arg['out-dir'], exist_ok=True)
 
             # System call tedana
-            sys_str = 'tedana -d ' + ' '.join(tedana_arg['echoFiles']) + ' -e ' \
+            sys_str = '/opt/venv-nbt/bin/tedana -d ' + ' '.join(tedana_arg['echoFiles']) + ' -e ' \
             + ' '.join(tedana_arg['echoTimes']) + ' --out-dir ' \
             + tedana_arg['out-dir'] + ' --overwrite' + ' --mask ' + tedana_arg['maskFile'] 
 

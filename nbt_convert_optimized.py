@@ -89,8 +89,8 @@ def rename_file(oldFile,newFile):
     os.system(sysstr)
 
 
-def nbt_convert_2():
-    parser = argparse.ArgumentParser(description="nbt_convert_2 reorganizes and renames your raw DICOM files for BIDS "
+def nbt_convert():
+    parser = argparse.ArgumentParser(description="nbt_convert reorganizes and renames your raw DICOM files for BIDS "
                                                  "compliant conversion to the nifti format.")
     parser.add_argument("json", help="json file defining DICOM series selected for BIDS conversion", type=str)
     parser.add_argument("outdir", help="output directory with DICOM and Nifti subdirectory", type=str)
@@ -377,7 +377,7 @@ def nbt_convert_2():
                             fmap_nii_old  = path_dest_nii + '/' + subsesprefix + scan_descr + 'e2_ph.nii.gz'
                             fmap_nii_new = path_dest_nii + '/' + subsesprefix + 'acq-gre_phasediff.nii.gz'
                             rename_file(fmap_nii_old,fmap_nii_new)
-              
+               
                     if fmap_json_new:
                         with open(fmap_json_new, "r") as f:
                             data_fmap = json.load(f)
@@ -443,9 +443,9 @@ def nbt_convert_2():
                             # add task to json file
                             add_task_name(echo_file_new, cur_scan['task'])
                     elif (mod == 'bold' or mod == 'sbref') and not ('echos' in cur_scan):
+                        session_epis.append(path_dest_nii)
                         # add task to json file
                         infile = path_dest_nii + '/' + subsesprefix + scan_descr + '.json'
-                        session_epis.append(infile)
                         add_task_name(infile, cur_scan['task'])
 
  #               pdb.set_trace()
@@ -467,12 +467,10 @@ def nbt_convert_2():
                         for task_name in intendedfor:                       
                             for epi in session_epis:
                                 if task_name in epi:
-                                    index = epi.find("/sub-")
+                                    index = epi.find("/ses-")
 
                                     if index != -1:
                                         epi = epi[index:]
-                                        epi = epi.replace(".json",".nii.gz")
-                                        epi = "bids::" + epi[1:]
 
                                     matches.append(epi)
 
@@ -497,4 +495,4 @@ def nbt_convert_2():
     #    add_intendedfor(tasksbold, tasksfmap)
 
 if __name__ == "__main__":
-    nbt_convert_2()
+    nbt_convert()

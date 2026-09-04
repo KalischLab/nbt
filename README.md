@@ -18,7 +18,7 @@ nbt (nic bids tools) is a customized collection of python scripts facilitating B
 |run|BIDS run|
 |task|BIDS task name|
 
-For example template files see example1_template.json and example2_template.json.
+Example templates for multiecho and singleecho fMRI can be found in this repository.
 
 3. Run nbt_assign.py to generate the dataset structure for the entire set of raw DICOM files.
 
@@ -28,9 +28,9 @@ nbt_assign.py assigns BIDS key-value pairs to each DICOM image in **raw_dicom** 
 
 4. Run nbt_convert_2.py to convert dicom to niftis and to create a BIDS-compliant dataset  
 
-**Usage: nbt_convert_2.py [OPTIONAL ARGUMENTS] [-lic LICENSE] [-fm {single,all,none}] data_json BIDS_outdir**
+**Usage: nbt_convert_2.py [OPTIONAL ARGUMENTS] [-lic LICENSE] data_json BIDS_outdir**
 
-nbt_convert_2 performs BIDS-compliant dicom-to-nifti conversion. Nifti files are named according to the output file of nbt_assign.py (**data_json**). Important: It must be defined whether fieldmaps will be used for single scans [single], for all scans [all] or if fieldmaps will not be used [none]. Furthermore a Freesurfer-license file should be passed using the -lic option as it is required by fMRIprep. nbt_convert_2.py requires Python 3.XX and some additional packages (see imports in nbt_convert.py). For more information type ./nbt_convert_2.py -h.
+nbt_convert_2 performs BIDS-compliant dicom-to-nifti conversion. Nifti files are named according to the output file of nbt_assign.py (**data_json**). A Freesurfer-license file should be passed using the -lic option as it is required by fMRIprep. nbt_convert_2.py requires Python 3.XX and some additional packages (see imports in nbt_convert.py). For more information type ./nbt_convert_2.py -h.
 
 5. Run fMRIprep
 

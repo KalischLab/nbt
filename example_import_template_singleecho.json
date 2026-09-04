@@ -1,0 +1,96 @@
+{
+    "sessions": [
+        {
+            "scan": [
+                {
+                    "data_type": "anat",
+                    "mod": "T1w",
+                    "scan_dir": "t1_mpr_ns_sag_p2_iso08_Series"
+                },
+                {
+                    "data_type": "anat",
+ 		    "mod": "T2w",
+                    "scan_dir": "t2_tse_tra_448_3mm_Series"
+                },
+                {
+                    "acq": "mbse",
+                    "data_type": "func",
+                    "mod": "bold",
+                    "scan_dir": "fMRI_TASK_R1_Series",
+                    "task": "task1"
+                },
+                {
+                    "acq": "mbse",
+                    "data_type": "func",
+                    "mod": "bold",
+                    "scan_dir": "fMRI_TASK__R2_Series",
+                    "task": "task2"
+                },
+		{
+                    "acq": "mbse",
+                    "data_type": "func",
+                    "mod": "bold",
+                    "scan_dir": "fMRI_TASK_R3_Series",
+                    "task": "task3"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedFor": "task1",
+                    "mod": "epi",
+		    "run": 2,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R1_AP_68slices_Series"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedFor": "task1",
+                    "mod": "epi",
+		    "run": 2,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R1_PA_68slices_Series"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedFor": "task2",
+                    "mod": "epi",
+		    "run": 3,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R2_AP_68slices_Series"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedFor": "task2",
+                    "mod": "epi",
+		    "run": 3,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R2_PA_68slices_Series"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedFor": "task3",
+                    "mod": "epi",
+		    "run": 4,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R3_AP_68slices_Series"
+                },
+		{
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedFor": "task3",
+                    "mod": "epi",
+		    "run": 4,
+                    "scan_dir": "SpinEchoFieldMap_TASK_R3_PA_68slices_Series"
+                }
+            ],
+            "sessionDir": "/mnt/nicshare/N2O_Fear/data/dicom/*/session1",
+            "sessionID": "session1"
+        }
+    ],
+    "subjectID": "001"
+}

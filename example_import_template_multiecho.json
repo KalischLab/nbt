@@ -1,0 +1,298 @@
+{
+    "sessions": [
+        {
+            "scan": [
+                {
+                    "data_type": "anat",
+                    "mod": "T1w",
+                    "scan_dir": "t1_mpr_ns_sag_p2_iso08_Series"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T1_R1_Series",
+                    "task": "rest1"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T1_R1_SBRef_Series",
+                    "task": "rest1"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_fam_me4mb3_51sl_2.5mmISO_TR1500_T1_Series",
+                    "task": "fam"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_fam_me4mb3_51sl_2.5mmISO_TR1500_T1_SBRef_Series",
+                    "task": "fam"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_fCond_me4mb3_51sl_2.5mmISO_TR1500_T1_Series",
+                    "task": "fearcond"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_fCond_me4mb3_51sl_2.5mmISO_TR1500_T1_SBRef_Series",
+                    "task": "fearcond"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedfor": ["rest1","fam","fearcond"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_AP_51sl_2.5mmISO_T1_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedfor": ["rest1","fam","fearcond"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_PA_51sl_2.5mmISO_T1_Series"
+                }
+            ],
+            "sessionDir": "/mnt/nicshare/EEG_fmri_ext/data/bids/Dicom/*/Day1",
+            "sessionID": "Day1"
+        },
+
+	{
+            "scan": [
+  
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R1_Series",
+                    "task": "rest2"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R1_SBRef_Series",
+                    "task": "rest2"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_fExt_me4mb3_51sl_2.5mmISO_TR1500_T2_Series",
+                    "task": "fearext"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_fExt_me4mb3_51sl_2.5mmISO_TR1500_T2_SBRef_Series",
+                    "task": "fearext"
+                },
+		        {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R2_Series",
+                    "task": "rest3"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R2_SBRef_Series",
+                    "task": "rest3"
+                },
+	            {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R3_Series",
+                    "task": "rest4"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R3_SBRef_Series",
+                    "task": "rest4"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R4_Series",
+                    "task": "rest5"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T2_R4_SBRef_Series",
+                    "task": "rest5"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedfor":["rest2","fearext","rest3"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_AP_51sl_2.5mmISO_T2_R1_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedfor":["rest2","fearext","rest3"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_PA_51sl_2.5mmISO_T2_R1_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedfor": "rest4",
+                    "mod": "epi",
+                    "run": 2,
+                    "scan_dir": "SpinEchoFieldMap_AP_51sl_2.5mmISO_T2_R2_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedfor": "rest4",
+                    "mod": "epi",
+                    "run": 2,
+                    "scan_dir": "SpinEchoFieldMap_PA_51sl_2.5mmISO_T2_R2_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedfor": "rest5",
+                    "mod": "epi",
+                    "run": 3,
+                    "scan_dir": "SpinEchoFieldMap_AP_51sl_2.5mmISO_T2_R3_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedfor": "rest5",
+                    "mod": "epi",
+                    "run": 3,
+                    "scan_dir": "SpinEchoFieldMap_PA_51sl_2.5mmISO_T2_R3_Series"
+                }
+            ],
+            "sessionDir": "/mnt/nicshare/EEG_fmri_ext/data/bids/Dicom/*/Day2",
+            "sessionID": "Day2"
+        },
+	{
+            "scan": [
+  
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T3_Series",
+                    "task": "rest6"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T3_SBRef_Series",
+                    "task": "rest6"
+                },
+	       	{
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T3_rest_Series",
+                    "task": "rest6"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_rest_me4mb3_51sl_2.5mmISO_TR1500_T3_rest_SBRef_Series",
+                    "task": "rest6"
+                },
+
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "bold",
+                    "scan_dir": "fMRI_test_me4mb3_51sl_2.5mmISO_TR1500_T3_Series",
+                    "task": "exttest"
+                },
+                {
+                    "acq": "mb3me4",
+                    "data_type": "func",
+                    "echos": 4,
+                    "mod": "sbref",
+                    "scan_dir": "fMRI_test_me4mb3_51sl_2.5mmISO_TR1500_T3_SBRef_Series",
+                    "task": "exttest"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "AP",
+                    "intendedfor": ["rest6","exttest"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_AP_51sl_2.5mmISO_T3_Series"
+                },
+                {
+                    "acq": "spinecho",
+                    "data_type": "fmap",
+                    "dir": "PA",
+                    "intendedfor": ["rest6","exttest"],
+                    "mod": "epi",
+                    "run": 1,
+                    "scan_dir": "SpinEchoFieldMap_PA_51sl_2.5mmISO_T3_Series"
+                }
+            ],
+            "sessionDir": "/mnt/nicshare/EEG_fmri_ext/data/bids/Dicom/*/Day3",
+            "sessionID": "Day3"
+        }
+    ],
+    "subjectID": "001"
+}

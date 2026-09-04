@@ -9,10 +9,7 @@ import pdb
 from glob import glob
 import traceback
 import time
-
-print("WARNING: nbt_convert.py is deprecated and will soon be deleted!!!")
-print("WARNING: nbt_convert.py is deprecated and will soon be deleted!!!")
-print("WARNING: nbt_convert.py is deprecated and will soon be deleted!!!")
+from pathlib import Path
 
 # path to errorlogfile
 cwd = os.getcwd()
@@ -36,24 +33,24 @@ def check_subjects(sublist_arg, data):
     return sublist_arg
 
 
-def add_intendedfor(tasksbold, tasksfmap):
-    for key in tasksfmap:
-        try:
-            with open(key, "r") as f:
-                data = json.load(f)
-                data["IntendedFor"] = tasksbold[tasksfmap[key]]
-
-        # permissions change when using open -> reset to full permission
-            os.chmod(key, 0o777)
-
-            with open(key, "w") as f:
-                json.dump(data, f, indent=4, sort_keys=True)
-
-        except Exception as e:
-            with open(errorlog,'a') as f:
-                f.write("\n\nERROR:\n")
-                f.write(str(e))
-                f.write(traceback.format_exc())
+#def add_intendedfor(tasksbold, tasksfmap):
+#    for key in tasksfmap:
+#        try:
+#            with open(key, "r") as f:
+#                data = json.load(f)
+#                data["IntendedFor"] = tasksbold[tasksfmap[key]]
+#
+#        # permissions change when using open -> reset to full permission
+#            os.chmod(key, 0o777)
+#
+#            with open(key, "w") as f:
+#                json.dump(data, f, indent=4, sort_keys=True)
+#
+#        except Exception as e:
+#            with open(errorlog,'a') as f:
+#                f.write("\n\nERROR:\n")
+#                f.write(str(e))
+#                f.write(traceback.format_exc())
 
 
 def add_task_name(infile, taskname):
@@ -102,13 +99,13 @@ def nbt_convert():
                                                   "(required for fmriprep)", type=str)
     parser.add_argument("-ow", "--overwrite", help="overwrite existing file", action='store_true')
     parser.add_argument("-dd", "--dataset_description", help="add path to dataset_description.json file", type=str)
-    parser.add_argument("-fm", "--fieldmap", help="define if fieldmaps are intended for single fmri scans [single], "
-                                                  "if a single fieldmap is intended for all fmri scans [all] or if fieldmaps "
-                                                  "are not part of the dataset [none, default]. If fieldmaps are part of the "
-                                                  "dataset either [single] or [all] must be chosen. If [all] is selected, make sure that "
-                                                  "there is only a single fieldmap per session in your imported dicom series. "
-                                                  "Fieldmaps intended for multiple but not all bold scans cannot be processed.",
-                        choices=["single", "all", "none"], default="none", type=str)
+    #parser.add_argument("-fm", "--fieldmap", help="define if fieldmaps are intended for single fmri scans [single], "
+    #                                              "if a single fieldmap is intended for all fmri scans [all] or if fieldmaps "
+    #                                              "are not part of the dataset [none, default]. If fieldmaps are part of the "
+    #                                              "dataset either [single] or [all] must be chosen. If [all] is selected, make sure that "
+    #                                              "there is only a single fieldmap per session in your imported dicom series. "
+    #                                              "Fieldmaps intended for multiple but not all bold scans cannot be processed.",
+    #                    choices=["single", "all", "none"], default="none", type=str)
 
     args = parser.parse_args()
 
@@ -170,6 +167,9 @@ def nbt_convert():
             # Number of sessions
             nrsess = len(data[sub]['sessions'])
 
+            # List of epis in current session
+            session_epis =[] 
+
             for ses in range(nrsess):
                 # Get session ID
                 sessid = data[sub]['sessions'][ses]['sessionID']
@@ -189,6 +189,7 @@ def nbt_convert():
 
                 # scans = image series
                 for scan in range(nrscans):
+
                     cur_scan = data[sub]['sessions'][ses]['scan'][scan]
                     # scan directory
                     scandir = cur_scan['scan_dir']
@@ -239,79 +240,58 @@ def nbt_convert():
                     # BOLD processing
                     ########################################################################################################
 
-                    if mod == 'bold':
-                        intendedfor = []
-
-                        if 'echos' in cur_scan:
-                            for echo in range(cur_scan['echos']):
-                                intendedfor.append(sesprefix + '/' + data_type + '/' + subsesprefix + scan_descr_nomod +
-                                                   'echo-' + str(echo + 1) + '_' + mod + '.nii.gz')
-                        else:
-                            intendedfor = [sesprefix + '/' + data_type + '/' + subsesprefix + scan_descr + '.nii.gz']
-
-                        # connect subject-session-task to bold scans
-                        if args.fieldmap == 'single':
-                            tasksbold_key = ""
-                            if "task" in cur_scan:
-                                tasksbold_key = subsesprefix + '_' + cur_scan['task']
+#                    if mod == 'bold':
+#                        intendedfor = []
+#
+#                        if 'echos' in cur_scan:
+#                            for echo in range(cur_scan['echos']):
+#                                intendedfor.append(sesprefix + '/' + data_type + '/' + subsesprefix + scan_descr_nomod +
+#                                                   'echo-' + str(echo + 1) + '_' + mod + '.nii.gz')
+#                        else:
+#                            intendedfor = [sesprefix + '/' + data_type + '/' + subsesprefix + scan_descr + '.nii.gz']
+#
+#                        # connect subject-session-task to bold scans
+#                        if args.fieldmap == 'single':
+#                            tasksbold_key = ""
+#                            if "task" in cur_scan:
+#                                tasksbold_key = subsesprefix + '_' + cur_scan['task']
                         #  if "acq" in cur_scan:
                         #      tasksbold_key = tasksbold_key + '-' + cur_scan['acq']
                         #  if "run" in cur_scan:
                         #      tasksbold_key = tasksbold_key + '-' + cur_scan['run']
 
-                            tasksbold[tasksbold_key] = intendedfor
+#                            tasksbold[tasksbold_key] = intendedfor
 
-                        elif args.fieldmap == 'all':
-                            tasksbold_key = subsesprefix + 'ALL'
-
-                            if not tasksbold_key in tasksbold:
-                                tasksbold[tasksbold_key] = intendedfor
-                            else:
-                                for s in intendedfor:
-                                    tasksbold[tasksbold_key].append(s)
+#                        elif args.fieldmap == 'all':
+#                            tasksbold_key = subsesprefix + 'ALL'
+#
+#                            if not tasksbold_key in tasksbold:
+#                                tasksbold[tasksbold_key] = intendedfor
+#                            else:
+#                                for s in intendedfor:
+#                                    tasksbold[tasksbold_key].append(s)
 
                     ########################################################################################################
                     # fieldmap processing
                     ########################################################################################################
 
                     # if fieldmap associate with corresponding subject-session-task value
-                    if data_type == 'fmap' and args.fieldmap == 'single':
-
-                        if cur_scan['intendedfor'].lower() == 'all':
-                            sys.exit("Error: Fieldmap parameter [single] does not match intendedfor value in "
-                                    "json file [all]")
-                        if cur_scan['acq'] == 'spinecho':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + scan_descr + '.json'
-                            tasksfmap[fmap_json] = subsesprefix + '_' + cur_scan['intendedfor']
-                        if cur_scan['acq'] == 'gremag':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude1.json'
-                            tasksfmap[fmap_json] = subsesprefix + '_' + cur_scan['intendedfor']
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude2.json'
-                            tasksfmap[fmap_json] = subsesprefix + '_' + cur_scan['intendedfor']
-                        if cur_scan['acq'] == 'grephase':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_phasediff.json'
-                            tasksfmap[fmap_json] = subsesprefix + '_' + cur_scan['intendedfor']
+#                    if data_type == 'fmap' and args.fieldmap != 'none':
+#
+#                       if cur_scan['acq'] == 'spinecho':
+#                            fmap_json = path_dest_nii + '/' + subsesprefix + scan_descr + '.json'
+#                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude1.json'
+#                            tasksfmap[fmap_json] = cur_scan['intendedfor']
+#                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude2.json'
+#                            tasksfmap[fmap_json] = cur_scan['intendedfor']
+#                        if cur_scan['acq'] == 'grephase':
+#                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_phasediff.json'
+#                            tasksfmap[fmap_json] = cur_scan['intendedfor']
                         
-                    elif data_type == 'fmap' and args.fieldmap == 'all':
-
-                        if cur_scan['intendedfor'].lower() != 'all':
-                            sys.exit("Error: Fieldmap parameter [all] does not match intendedfor value in "                                 "json file!")
-                        if cur_scan['acq'] == 'spinecho':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + scan_descr + '.json'
-                            tasksfmap[fmap_json] = subsesprefix + 'ALL'
-                        if cur_scan['acq'] == 'gremag':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude1.json'
-                            tasksfmap[fmap_json] = subsesprefix + 'ALL'
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude2.json'
-                            tasksfmap[fmap_json] = subsesprefix + 'ALL'
-                        if cur_scan['acq'] == 'grephase':
-                            fmap_json = path_dest_nii + '/' + subsesprefix + 'acq-gre_phasediff.json'
-                            tasksfmap[fmap_json] = subsesprefix + 'ALL'
-
-                    elif data_type == 'fmap' and args.fieldmap == 'none':
-
-                        sys.exit("Error: Fieldmaps found but fieldmap parameter [-fm] was not set or set to [none]. If "
-                                 "fieldmaps are part of the dataset, choose either [all] or [single].")
+#                    elif data_type == 'fmap' and args.fieldmap == 'none':
+#
+#                        sys.exit("Error: Fieldmaps found but fieldmap parameter [-fm] was not set or set to [none]. If "
+#                                 "fieldmaps are part of the dataset, choose either [all] or [single].")
                     outfile = glob(op.join(path_dest_nii, subsesprefix + scan_descr + "*"))
 
                     #if os.path.isfile(outfile[0]) and not args.overwrite:
@@ -364,7 +344,14 @@ def nbt_convert():
                     ########################################################################################################
                     # BIDS compliant renaming of gre fieldmaps
                     ########################################################################################################
-                        
+                    fmap_json_new = ""
+
+                    if data_type == 'fmap':
+                        fmap_path = path_dest_nii
+
+                    if data_type == 'fmap' and cur_scan['acq'] == 'spinecho':
+                        fmap_json_new = path_dest_nii + '/' + subsesprefix + scan_descr + ".json"
+
                     if data_type == 'fmap' and cur_scan['acq'] == 'gremag':
                         fmap_json_old = path_dest_nii + '/' + subsesprefix + scan_descr + 'e1.json'
                         if os.path.isfile(fmap_json_old):
@@ -373,7 +360,7 @@ def nbt_convert():
                             fmap_nii_old  = path_dest_nii + '/' + subsesprefix + scan_descr + 'e1.nii.gz'
                             fmap_nii_new = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude1.nii.gz'
                             rename_file(fmap_nii_old,fmap_nii_new)
-                                    
+                            
                         fmap_json_old = path_dest_nii + '/' + subsesprefix + scan_descr + 'e2.json'
                         if os.path.isfile(fmap_json_old):
                             fmap_json_new = path_dest_nii + '/' + subsesprefix + 'acq-gre_magnitude2.json'
@@ -390,6 +377,17 @@ def nbt_convert():
                             fmap_nii_old  = path_dest_nii + '/' + subsesprefix + scan_descr + 'e2_ph.nii.gz'
                             fmap_nii_new = path_dest_nii + '/' + subsesprefix + 'acq-gre_phasediff.nii.gz'
                             rename_file(fmap_nii_old,fmap_nii_new)
+               
+                    if fmap_json_new:
+                        with open(fmap_json_new, "r") as f:
+                            data_fmap = json.load(f)
+                            data_fmap["IntendedFor"] = cur_scan['intendedfor']
+
+                            # permissions change when using open -> reset to full permission
+                        os.chmod(fmap_json_new, 0o777)
+
+                        with open(fmap_json_new, "w") as f:
+                            json.dump(data_fmap, f, indent=4, sort_keys=True)
 
                     ########################################################################################################
                     # BIDS compliant renaming of multi-echo files
@@ -415,10 +413,10 @@ def nbt_convert():
 
                             echo_file_new = path_dest_nii + '/' + subsesprefix + scan_descr_nomod + 'echo-' + str(i + 1) + \
                                             '_' + mod + '.nii.gz'
+
                             sysstr = 'mv ' + echo_file_old + ' ' + echo_file_new
                             print(sysstr)
                             os.system(sysstr)
-                           
                             
                             if os.path.exists(echo_file_old_error_nii):
                                 sysstr = 'rm ' + echo_file_old_error_nii
@@ -438,13 +436,51 @@ def nbt_convert():
                             sysstr = 'mv ' + echo_file_old + ' ' + echo_file_new
                             print(sysstr)
                             os.system(sysstr)
+                            
+                            if mod == 'bold':
+                                session_epis.append(echo_file_new)
 
                             # add task to json file
                             add_task_name(echo_file_new, cur_scan['task'])
                     elif (mod == 'bold' or mod == 'sbref') and not ('echos' in cur_scan):
+                        session_epis.append(path_dest_nii)
                         # add task to json file
                         infile = path_dest_nii + '/' + subsesprefix + scan_descr + '.json'
                         add_task_name(infile, cur_scan['task'])
+
+ #               pdb.set_trace()
+
+                if fmap_path:
+                    fmap_directory = Path(fmap_path)
+
+                    for json_file in fmap_directory.glob("*.json"):
+                        with open(json_file, "r") as f:
+                            data_fm = json.load(f)
+
+                        # Check if "intendedfor" exists and is a list
+                        intendedfor = data_fm.get("IntendedFor")
+
+                        if isinstance(intendedfor, str):
+                            intendedfor = [intendedfor]
+
+                        matches =[] 
+                        for task_name in intendedfor:                       
+                            for epi in session_epis:
+                                if task_name in epi:
+                                    index = epi.find("/ses-")
+
+                                    if index != -1:
+                                        epi = epi[index:]
+
+                                    matches.append(epi)
+
+                        data_fm["IntendedFor"] = matches
+
+                        # Save updated JSON
+                        with open(json_file, "w") as f:
+                            json.dump(data_fm, f, indent=4)
+
+
         except Exception as e:
             with open(errorlog,'a') as f:
                 f.write("\n\nERROR:\n")
@@ -455,8 +491,8 @@ def nbt_convert():
     # add intendedFor field to fmap json files
     ####################################################################################################################
 
-    if not args.fieldmap == 'none':
-        add_intendedfor(tasksbold, tasksfmap)
+    #if not args.fieldmap == 'none':
+    #    add_intendedfor(tasksbold, tasksfmap)
 
 if __name__ == "__main__":
     nbt_convert()
